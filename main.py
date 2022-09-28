@@ -8,7 +8,7 @@ from loguru import logger
 import send_mail
 from datetime import datetime
 
-logger.add("KYB_CTR_to_abcp.log",
+logger.add(config.FILE_NAME_CONFIG,
            format="{time:DD/MM/YY HH:mm:ss} - {file} - {level} - {message}",
            level="INFO",
            rotation="1 month",
