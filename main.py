@@ -55,7 +55,9 @@ def get_price():
             logger.info(f"Read file '{item}' from local server")
 
             path_file = path + "\\" + item
-            df_price = pd.read_excel(path_file)
+            with smbclient.open_file(path_file, mode="rb") as fd:
+                file_bytes = fd.read()
+                df_price = pd.read_excel(file_bytes)
             df = pd.concat([df, df_price], axis=0, ignore_index=True)
             df = df[['articul', 'brand', 'price']]
     return df
