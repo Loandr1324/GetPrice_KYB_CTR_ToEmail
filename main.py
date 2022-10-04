@@ -23,16 +23,19 @@ def get_stock_ftp(file: str) -> pd.DataFrame:
     user = config.FTP_AUTH['USER']
     psw = config.FTP_AUTH['PSW']
 
-    with FTP(host) as ftp:
-        ftp.login(user=user, passwd=psw)
-        ftp.encoding = 'utf-8'
+    try:
+        with FTP(host) as ftp:
+            ftp.login(user=user, passwd=psw)
+            ftp.encoding = 'utf-8'
 
-        logger.info(f"Read file '{file}' via ftp ")
+            logger.info(f"Read file '{file}' via ftp ")
 
-        r = io.BytesIO()
-        ftp.retrbinary('RETR ' + file, r.write, 1024)
-        df = pd.read_csv(io.BytesIO(r.getvalue()), delimiter=';')
-        df = df.drop(columns=['price', 'currency'])
+            r = io.BytesIO()
+            ftp.retrbinary('RETR ' + file, r.write, 1024)
+            df = pd.read_csv(io.BytesIO(r.getvalue()), delimiter=';')
+            df = df.drop(columns=['price', 'currency'])
+    except ConnectionError as ce:
+        logger.error(f"Can't read file '{file}' via ftp, error:\n {ce}")
     return df
 
 
