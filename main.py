@@ -63,6 +63,7 @@ def get_price():
                 df_price = pd.read_excel(file_bytes)
             df = pd.concat([df, df_price], axis=0, ignore_index=True)
             df = df[['articul', 'brand', 'price']]
+            df = df.astype({'articul': str})
     return df
 
 
