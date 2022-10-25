@@ -64,6 +64,8 @@ def get_price():
             df = pd.concat([df, df_price], axis=0, ignore_index=True)
             df = df[['articul', 'brand', 'price']]
             df = df.astype({'articul': str})
+    df.to_excel('temp2.xlsx', index=False)
+    send_df_to_email('price_MX_KYB_CTR.csv', 'temp2.xlsx')
     return df
 
 
@@ -101,6 +103,15 @@ def send_df_to_email(file: str, file_temp: str):
             'File_name': filename,
             'Temp_file': file_temp
             }
+        send_mail.send(message)
+    elif file_temp == 'temp2.xlsx':
+        message = {
+            'Subject': f"{filename}",
+            'email_content': f"Полный прайс-лист по брендам KYB и CTR: {filename}",
+            'To': config.TO_EMAILS['TO_PRICE'],
+            'File_name': filename,
+            'Temp_file': file_temp
+        }
         send_mail.send(message)
     return
 
@@ -152,5 +163,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
