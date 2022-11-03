@@ -33,7 +33,7 @@ def send(message=None):
         logger.info(f"Send message to emails {addr_to}")
 
         msg = MIMEMultipart()  # Создаем сообщение
-        msg['From'] = addr_from # Адресат
+        msg['From'] = addr_from  # Адресат
         msg['To'] = ','.join(addr_to)  # Получатель
         msg['Subject'] = message['Subject']  # Тема сообщения
 
