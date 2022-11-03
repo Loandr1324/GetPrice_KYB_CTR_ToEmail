@@ -64,8 +64,9 @@ def get_price():
             df = pd.concat([df, df_price], axis=0, ignore_index=True)
             df = df[['articul', 'brand', 'price']]
             df = df.astype({'articul': str})
-    df.to_excel('temp2.xlsx', index=False)
-    send_df_to_email('price_MX_KYB_CTR.csv', 'temp2.xlsx')
+    # df.to_csv('temp2.csv', index=False, header=False, line_terminator=';\n')
+    df.to_csv('temp2.csv', index=False, header=False)
+    send_df_to_email('price_MX_KYB_CTR.csv', 'temp2.csv')
     return df
 
 
@@ -80,7 +81,7 @@ def send_df_to_email(file: str, file_temp: str):
     :return: None
     """
     # Изменяем расширение в наименовании файла
-    filename = file[:-3] + 'xlsx'
+    filename = file
     logger.info(f"We send a temporary file '{file_temp}' under the name file '{filename}'")
 
     # Создаём словарь с данными, для письма и передаём в функцию для отправки письма
@@ -104,7 +105,7 @@ def send_df_to_email(file: str, file_temp: str):
             'Temp_file': file_temp
             }
         send_mail.send(message)
-    elif file_temp == 'temp2.xlsx':
+    elif file_temp == 'temp2.csv':
         message = {
             'Subject': f"{filename}",
             'email_content': f"Полный прайс-лист по брендам KYB и CTR: {filename}",
@@ -136,6 +137,7 @@ def get_prices_to_email():
 
         # Отправляем на почту файл с корректными данными
         if len(df_correct) > 0:
+            file = file[:-3] + 'xlsx'
             send_df_to_email(file, 'temp.xlsx')
 
         # Добавляем данные в DataFrame с ошибками
@@ -151,7 +153,7 @@ def get_prices_to_email():
         df_error = df_error[['articul', 'brand']].drop_duplicates()
         df_error.to_excel('temp1.xlsx', index=False)
         if len(df_error) > 0:
-            send_df_to_email('error.csv', 'temp1.xlsx')
+            send_df_to_email('error.xlsx', 'temp1.xlsx')
     else:
         logger.info(f"Day weekly and hour: '{day_hour_now}' don't send to email's error file")
     return
