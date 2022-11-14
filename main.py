@@ -154,6 +154,8 @@ def get_prices_to_email():
         df_error.to_excel('temp1.xlsx', index=False)
         if len(df_error) > 0:
             send_df_to_email('error.xlsx', 'temp1.xlsx')
+        else:
+            logger.info(f"Not error. Don't send to email's error file")
     else:
         logger.info(f"Day weekly and hour: '{day_hour_now}' don't send to email's error file")
     return
