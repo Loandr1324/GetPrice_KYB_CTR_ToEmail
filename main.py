@@ -1,12 +1,14 @@
 # Author Loik Andrey 7034@balancedv.ru
 import io
+import os
+
 import config
 import pandas as pd
 from ftplib import FTP
 import smbclient
 from loguru import logger
 import send_mail
-from datetime import datetime
+from datetime import datetime, timedelta
 
 logger.add(config.FILE_NAME_CONFIG,
            format="{time:DD/MM/YY HH:mm:ss} - {file} - {level} - {message}",
@@ -64,6 +66,21 @@ def get_price():
             df = pd.concat([df, df_price], axis=0, ignore_index=True)
             df = df[['articul', 'brand', 'price']]
             df = df.astype({'articul': str})
+
+            # Переименовываем файл, если это последняя загрузка на этот день
+            time_now = datetime.utcnow()
+            logger.info(f'Time now: {time_now.strftime("%H:%M")}')
+
+            if time_now.strftime('%H:%M') == ('07:46' or '07:47'):
+                logger.info(f'Rename file: {item}')
+
+                next_day = datetime.utcnow() + timedelta(days=1)
+                logger.info(f'New file name: {next_day.strftime("%Y.%m.%d") + item[10:]}')
+
+                new_name = path + "\\" + next_day.strftime('%Y.%m.%d') + item[10:]
+                os.rename(path_file, new_name)
+            else:
+                logger.info(f'Not rename file: {item}')
     # df.to_csv('temp2.csv', index=False, header=False, line_terminator=';\n')
     df.to_csv('temp2.csv', index=False, header=False)
     send_df_to_email('price_MX_KYB_CTR.csv', 'temp2.csv')
@@ -167,4 +184,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
