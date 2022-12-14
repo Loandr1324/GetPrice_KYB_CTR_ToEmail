@@ -71,8 +71,7 @@ def get_price():
             time_now = datetime.utcnow()
             logger.info(f'Time now: {time_now.strftime("%H:%M")}')
 
-            # if time_now.strftime('%H:%M') == ('07:46' or '07:47'):
-            if True:
+            if time_now.strftime('%H:%M') == ('07:46' or '07:47'):
                 logger.info(f'Rename file: {item}')
 
                 next_day = datetime.utcnow() + timedelta(days=1)
@@ -80,7 +79,6 @@ def get_price():
 
                 new_name = path + "\\" + next_day.strftime('%Y.%m.%d') + item[10:]
                 smbclient.rename(path_file, new_name)
-                # os.rename(path_file, new_name)
             else:
                 logger.info(f'Not rename file: {item}')
     # df.to_csv('temp2.csv', index=False, header=False, line_terminator=';\n')
